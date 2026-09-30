@@ -18,9 +18,11 @@ from the live IDB the moment Unicorn touches it.
    passed to `open_database` this session (or the one `list_databases`
    reported). Don't use the MCP `instance_id` -- it is not ida-nexus's
    `record_id`, and you don't need it.
-2. Build your `Uc` as you normally would, then bind it by path. `bind`
-   attaches to the instance already open for that path and only spawns a new
-   IDA worker if there is none:
+2. Build your `Uc` as you normally would, then bind it by path. The
+   path can be the binary or its `.i64` (or a symlink to it); either attaches
+   to the instance already open. A *copy* of the binary in another folder is a
+   different database and spawns a new IDA worker, so use the exact path IDA
+   already has open:
 
    ```python
    from unicorn import UC_ARCH_X86, UC_HOOK_CODE, UC_MODE_64, Uc

@@ -4,6 +4,11 @@ Lazy IDA-backed memory for [Unicorn](https://github.com/unicorn-engine/unicorn):
 emulate code from a live IDA database without hand-copying bytes into a
 memory map.
 
+Built for agentic reverse engineering: an agent driving IDA through
+[ida-mcp](https://github.com/HexRaysSA/ida-mcp) can emulate what it is
+analyzing without ferrying bytes through its own context. `SKILL.md` teaches
+agents how to use it.
+
 Builds on [ida-nexus](https://github.com/HexRaysSA/ida-nexus). Kept as a
 separate package specifically so plain `ida-nexus` (and anything that depends
 on it, like `ida-mcp`) never pulls in a `unicorn` dependency it doesn't need.
@@ -47,8 +52,11 @@ with bind(uc, "/path/to/binary") as bound:
     uc.emu_start(entry, stop_ea)
 ```
 
-`bind` attaches to the instance already open for that path, and only spawns a
-new IDA worker if there is none. It owns the handle it opened and closes it on
+The path can be the binary or its `.i64` database; either attaches to the
+same open instance, and a symlink to it works too. Instances are matched by
+database, not by file contents, so a *copy* of the binary in another folder is
+a different database: `bind` spawns a new IDA worker (and a new database) for
+it. Pass the path IDA already has open (or its `.i64`) to reuse the instance. It owns the handle it opened and closes it on
 `__exit__`.
 
 If you already hold a `DatabaseHandle` (for example from
